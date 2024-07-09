@@ -60,4 +60,40 @@ public class PokemonRepositoryTest {
         assertThat(savedPokemons.getFirst().getPokemonId()).isGreaterThan(0);
         assertThat(savedPokemons.getFirst().getName()).isEqualTo("Charmander");
     }
+
+    @Test
+    public void PokemonRepository_FindById_ReturnOnePokemon() {
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
+
+        pokemonRepository.save(charmander);
+
+        /* ***************** ACT ***************** */
+        PokemonEntity returnedPokemon = pokemonRepository.findById(charmander.getPokemonId()).get();
+
+        /* ***************** ASSERT ***************** */
+        assertThat(returnedPokemon).isNotNull();
+        assertThat(returnedPokemon.getName()).isEqualTo("Charmander");
+        assertThat(returnedPokemon.getType()).isEqualTo("Fire");
+    }
+
+    @Test
+    public void PokemonRepository_FindAll_ReturnsMoreThanOnePokemon() {
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        PokemonEntity bulbasaur = PokemonEntity.builder().name("Bulbasaur").type("Grass").build();
+        PokemonEntity squirtle = PokemonEntity.builder().name("Squirtle").type("Water").build();
+
+        pokemonRepository.save(charmander);
+        pokemonRepository.save(bulbasaur);
+        pokemonRepository.save(squirtle);
+
+        /* ***************** ACT ***************** */
+        List<PokemonEntity> pokemonList = pokemonRepository.findAll();
+
+        /* ***************** ASSERT ***************** */
+        assertThat(pokemonList).isNotNull();
+        assertThat(pokemonList.size()).isGreaterThan(0);
+        assertThat(pokemonList.size()).isEqualTo(3);
+    }
 }
