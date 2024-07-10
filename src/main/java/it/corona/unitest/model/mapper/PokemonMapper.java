@@ -2,14 +2,18 @@ package it.corona.unitest.model.mapper;
 
 import it.corona.unitest.model.dto.PokemonDto;
 import it.corona.unitest.model.entity.PokemonEntity;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
+@AllArgsConstructor
 public class PokemonMapper {
-    private ModelMapper modelMapper;
+
+    private final ModelMapper modelMapper;
 
     public List<PokemonDto> mapListToDto(List<PokemonEntity> entitiesList) {
         return entitiesList
