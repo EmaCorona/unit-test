@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -42,13 +43,13 @@ public class PokemonRepositoryTest {
         /* ***************** ARRANGE ***************** */
         List<PokemonEntity> mockedPokemons = new ArrayList<>();
 
-        PokemonEntity mockedCharmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
-        PokemonEntity mockedBulbasaur = PokemonEntity.builder().name("Bulbasaur").type("Grass").build();
-        PokemonEntity mockedSquirtle = PokemonEntity.builder().name("Squirtle").type("Water").build();
+        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        PokemonEntity bulbasaur = PokemonEntity.builder().name("Bulbasaur").type("Grass").build();
+        PokemonEntity squirtle = PokemonEntity.builder().name("Squirtle").type("Water").build();
 
-        mockedPokemons.add(mockedCharmander);
-        mockedPokemons.add(mockedBulbasaur);
-        mockedPokemons.add(mockedSquirtle);
+        mockedPokemons.add(charmander);
+        mockedPokemons.add(bulbasaur);
+        mockedPokemons.add(squirtle);
 
         /* ***************** ACT ***************** */
         List<PokemonEntity> savedPokemons = pokemonRepository.saveAll(mockedPokemons);
@@ -95,5 +96,40 @@ public class PokemonRepositoryTest {
         assertThat(pokemonList).isNotNull();
         assertThat(pokemonList.size()).isGreaterThan(0);
         assertThat(pokemonList.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void PokemonRepository_Update_ReturnUpdatedPokemon() {
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity pokemon = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        pokemonRepository.save(pokemon);
+
+        /* ***************** ACT ***************** */
+        pokemon.setName("Charmeleon");
+        pokemonRepository.save(pokemon);
+
+        PokemonEntity updatedPokemon = pokemonRepository.findById(pokemon.getPokemonId()).get();
+
+        /* ***************** ASSERT ***************** */
+        assertThat(updatedPokemon).isNotNull();
+        assertThat(updatedPokemon.getPokemonId()).isGreaterThan(0);
+        assertThat(updatedPokemon.getName()).isEqualTo("Charmeleon");
+        assertThat(updatedPokemon.getType()).isEqualTo("Fire");
+    }
+
+    @Test
+    public void PokemonRepository_Delete_ReturnedPokemonIsEmpty() {
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity pokemon = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        pokemonRepository.save(pokemon);
+
+        /* ***************** ACT ***************** */
+        pokemonRepository.delete(pokemon);
+
+        Optional<PokemonEntity> deletedPokemon = pokemonRepository.findById(pokemon.getPokemonId());
+
+        /* ***************** ASSERT ***************** */
+        assertThat(deletedPokemon).isEmpty();
+        assertThat(deletedPokemon.isPresent()).isFalse();
     }
 }
