@@ -32,6 +32,15 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    public PokemonDto findById(Long pokemonId) {
+        log.info("REQUEST START - About to request the pokemon with the specified pokemonId");
+        PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
+        PokemonDto pokemonDto = pokemonMapper.mapToDto(pokemonEntity);
+        log.info("REQUEST END - Pokemon retrieved");
+        return pokemonDto;
+    }
+
+    @Override
     public List<PokemonDto> findAllPokemon() {
         log.info("REQUEST START - About to request all the pokemons");
 
@@ -42,6 +51,7 @@ public class PokemonServiceImpl implements PokemonService {
             log.info("REQUEST END - Pokemon list retrieved");
             return pokemonsList;
         } else {
+            log.error("REQUEST ERROR: No Pokemon was found");
             throw new PokemonNotFoundException();
         }
     }

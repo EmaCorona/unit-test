@@ -22,6 +22,12 @@ public class PokemonController {
         return new ResponseEntity<>(savedPokemon, HttpStatus.CREATED);
     }
 
+    @GetMapping("/find-by-id/{pokemonId}")
+    public ResponseEntity<PokemonDto> findById(@PathVariable Long pokemonId) {
+        PokemonDto pokemonDto = pokemonService.findById(pokemonId);
+        return new ResponseEntity<>(pokemonDto, HttpStatus.OK);
+    }
+
     @GetMapping("/find-all-pokemons")
     public ResponseEntity<List<PokemonDto>> findAllPokemon() {
         List<PokemonDto> pokemons = pokemonService.findAllPokemon();

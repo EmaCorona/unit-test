@@ -8,5 +8,6 @@ import java.util.List;
 public interface PokemonService {
     @Transactional
     PokemonDto createPokemon(PokemonDto pokemonDto);
+    PokemonDto findById(Long pokemonId);
     List<PokemonDto> findAllPokemon();
 }
