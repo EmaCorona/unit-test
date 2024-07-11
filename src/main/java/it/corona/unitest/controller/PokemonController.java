@@ -33,4 +33,10 @@ public class PokemonController {
         List<PokemonDto> pokemons = pokemonService.findAllPokemon();
         return new ResponseEntity<>(pokemons, HttpStatus.OK);
     }
+
+    @PutMapping("/update-pokemon")
+    public ResponseEntity<PokemonDto> updatePokemon(@RequestBody PokemonDto pikachu, @RequestParam Long pokemonId) {
+        PokemonDto raichu = pokemonService.updatePokemon(pikachu, pokemonId);
+        return new ResponseEntity<>(raichu, HttpStatus.OK);
+    }
 }

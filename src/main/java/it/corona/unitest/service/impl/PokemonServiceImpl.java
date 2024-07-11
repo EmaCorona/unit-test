@@ -55,4 +55,15 @@ public class PokemonServiceImpl implements PokemonService {
             throw new PokemonNotFoundException();
         }
     }
+
+    @Override
+    public PokemonDto updatePokemon(PokemonDto pokemonDto, Long pokemonId) {
+        log.info("REQUEST START - About to update the specified Pokemon");
+        PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
+        pokemonEntity.setName(pokemonDto.getName());
+        pokemonEntity.setType(pokemonDto.getType());
+        pokemonRepository.save(pokemonEntity);
+        log.info("REQUEST END - Pokemon Updated");
+        return pokemonMapper.mapToDto(pokemonEntity);
+    }
 }

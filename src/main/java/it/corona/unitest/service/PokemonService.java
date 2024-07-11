@@ -10,4 +10,6 @@ public interface PokemonService {
     PokemonDto createPokemon(PokemonDto pokemonDto);
     PokemonDto findById(Long pokemonId);
     List<PokemonDto> findAllPokemon();
+    @Transactional
+    PokemonDto updatePokemon(PokemonDto pokemonDto, Long pokemonId);
 }
