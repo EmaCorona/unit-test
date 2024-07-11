@@ -13,12 +13,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class PokemonServiceTest {
@@ -51,6 +51,28 @@ public class PokemonServiceTest {
         assertThat(savedPokemon.getPokemonId()).isGreaterThan(0);
         assertThat(savedPokemon.getName()).isEqualTo("Blastoise");
         assertThat(savedPokemon.getType()).isEqualTo("Water");
+    }
+
+    @Test
+    public void PokemonService_FindById_ReturnsOnePokemon() {
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity mockedEntity = PokemonEntity.builder().pokemonId(1L).name("Charmander").type("Fire").build();
+        PokemonDto mockedDto = PokemonDto.builder().pokemonId(1L).name("Charmander").type("Fire").build();
+
+        when(pokemonRepository.findById(any(Long.class))).thenReturn(Optional.of(mockedEntity));
+        when(pokemonMapper.mapToDto(any(PokemonEntity.class))).thenReturn(mockedDto);
+
+        /* ***************** ACT ***************** */
+        PokemonDto result = pokemonService.findById(1L);
+
+        /* ***************** ASSERT ***************** */
+        verify(pokemonRepository).findById(1L);
+        verify(pokemonMapper).mapToDto(mockedEntity);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getPokemonId()).isGreaterThan(0);
+        assertThat(result.getName()).isEqualTo("Charmander");
+        assertThat(result.getType()).isEqualTo("Fire");
     }
 
     @Test
@@ -88,5 +110,45 @@ public class PokemonServiceTest {
         assertThat(resultList.size()).isGreaterThan(0);
         assertThat(resultList.getFirst().getName()).isEqualTo("Charmander");
         assertThat(resultList.getLast().getName()).isEqualTo("Bulbasaur");
+    }
+
+    @Test
+    public void PokemonService_UpdatePokemon_ReturnUpdatedPokemon() {
+        /* ***************** ARRANGE ***************** */
+        PokemonDto mockedDto = PokemonDto.builder().pokemonId(1L).name("Squirtle").type("Water").build();
+        PokemonEntity mockedEntity = PokemonEntity.builder().pokemonId(1L).name("Squirtle").type("Water").build();
+
+        when(pokemonRepository.findById(any(Long.class))).thenReturn(Optional.of(mockedEntity));
+        when(pokemonRepository.save(any(PokemonEntity.class))).thenReturn(mockedEntity);
+        when(pokemonMapper.mapToDto(any(PokemonEntity.class))).thenReturn(mockedDto);
+
+        /* ***************** ACT ***************** */
+        PokemonDto updatedPokemon = pokemonService.updatePokemon(mockedDto, 1L);
+
+        /* ***************** ASSERT ***************** */
+        verify(pokemonRepository).findById(1L);
+        verify(pokemonRepository).save(mockedEntity);
+        verify(pokemonMapper).mapToDto(mockedEntity);
+
+        assertThat(updatedPokemon).isNotNull();
+        assertThat(updatedPokemon.getPokemonId()).isGreaterThan(0);
+        assertThat(updatedPokemon.getName()).isEqualTo("Squirtle");
+        assertThat(updatedPokemon.getType()).isEqualTo("Water");
+    }
+
+    @Test
+    public void PokemonService_DeletePokemonById_ReturnOk() {
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity mockedEntity = PokemonEntity.builder().pokemonId(1L).name("Squirtle").type("Water").build();
+
+        when(pokemonRepository.findById(any(Long.class))).thenReturn(Optional.of(mockedEntity));
+        doNothing().when(pokemonRepository).delete(any(PokemonEntity.class));
+
+        /* ***************** ACT ***************** */
+        pokemonService.deletePokemonById(1L);
+
+        /* ***************** ASSERT ***************** */
+        verify(pokemonRepository).findById(1L);
+        verify(pokemonRepository).delete(mockedEntity);
     }
 }
