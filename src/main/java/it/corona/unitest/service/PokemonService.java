@@ -12,4 +12,5 @@ public interface PokemonService {
     List<PokemonDto> findAllPokemon();
     @Transactional
     PokemonDto updatePokemon(PokemonDto pokemonDto, Long pokemonId);
+    void deletePokemonById(Long pokemonId);
 }

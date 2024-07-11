@@ -39,4 +39,10 @@ public class PokemonController {
         PokemonDto raichu = pokemonService.updatePokemon(pikachu, pokemonId);
         return new ResponseEntity<>(raichu, HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete-pokemon")
+    public ResponseEntity<Void> deletePokemon(@RequestParam Long pokemonId) {
+        pokemonService.deletePokemonById(pokemonId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

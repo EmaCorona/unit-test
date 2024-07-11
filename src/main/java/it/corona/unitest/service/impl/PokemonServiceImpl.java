@@ -58,12 +58,20 @@ public class PokemonServiceImpl implements PokemonService {
 
     @Override
     public PokemonDto updatePokemon(PokemonDto pokemonDto, Long pokemonId) {
-        log.info("REQUEST START - About to update the specified Pokemon");
+        log.info("REQUEST START - About to update the requested Pokemon");
         PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
         pokemonEntity.setName(pokemonDto.getName());
         pokemonEntity.setType(pokemonDto.getType());
         pokemonRepository.save(pokemonEntity);
         log.info("REQUEST END - Pokemon Updated");
         return pokemonMapper.mapToDto(pokemonEntity);
+    }
+
+    @Override
+    public void deletePokemonById(Long pokemonId) {
+        log.info("REQUEST START - About to delete the requested Pokemon");
+        PokemonEntity pokemonToDelete = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
+        pokemonRepository.delete(pokemonToDelete);
+        log.info("REQUEST END - Pokemon deleted");
     }
 }
