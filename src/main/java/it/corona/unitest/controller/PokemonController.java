@@ -43,6 +43,6 @@ public class PokemonController {
     @DeleteMapping("/delete-pokemon")
     public ResponseEntity<Void> deletePokemon(@RequestParam Long pokemonId) {
         pokemonService.deletePokemonById(pokemonId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
