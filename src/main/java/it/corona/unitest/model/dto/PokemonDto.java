@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PokemonDto {
     private Long pokemonId;
+    private Long pokedexId;
     private String name;
     private String type;
 }
