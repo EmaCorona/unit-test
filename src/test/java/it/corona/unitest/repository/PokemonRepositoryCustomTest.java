@@ -27,9 +27,9 @@ public class PokemonRepositoryCustomTest {
     @Test
     public void PokemonRepository_FindByType_ReturnPokemonWithThatType() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
-        PokemonEntity charmeleon = PokemonMockUtils.getMockedCharmeleonEntity();
-        PokemonEntity charizard = PokemonMockUtils.getMockedCharizardEntity();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity(false);
+        PokemonEntity charmeleon = PokemonMockUtils.getMockedCharmeleonEntity(false);
+        PokemonEntity charizard = PokemonMockUtils.getMockedCharizardEntity(false);
 
         List<PokemonEntity> pokemonToSave = List.of(charmander, charmeleon, charizard);
 

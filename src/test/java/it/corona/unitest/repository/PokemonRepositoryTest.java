@@ -18,6 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class PokemonRepositoryTest {
+
     private final PokemonRepository pokemonRepository;
 
     @Autowired
@@ -28,7 +29,7 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_Save_ReturnSavedPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity pokemon = PokemonMockUtils.getMockedPikachuEntity();
+        PokemonEntity pokemon = PokemonMockUtils.getMockedPikachuEntity(false);
 
         /* ***************** ACT ***************** */
         PokemonEntity savedPokemon = pokemonRepository.save(pokemon);
@@ -44,9 +45,9 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_SaveAll_ReturnSavedPokemons() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
-        PokemonEntity bulbasaur = PokemonMockUtils.getMockedBulbasaurEntity();
-        PokemonEntity squirtle = PokemonMockUtils.getMockedSquirtleEntity();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity(false);
+        PokemonEntity bulbasaur = PokemonMockUtils.getMockedBulbasaurEntity(false);
+        PokemonEntity squirtle = PokemonMockUtils.getMockedSquirtleEntity(false);
 
         List<PokemonEntity> mockedPokemons = List.of(charmander, squirtle, bulbasaur);
 
@@ -65,7 +66,7 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_FindById_ReturnOnePokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity(false);
 
         pokemonRepository.save(charmander);
 
@@ -82,9 +83,9 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_FindAll_ReturnsAllPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
-        PokemonEntity bulbasaur = PokemonMockUtils.getMockedBulbasaurEntity();
-        PokemonEntity squirtle = PokemonMockUtils.getMockedSquirtleEntity();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity(false);
+        PokemonEntity bulbasaur = PokemonMockUtils.getMockedBulbasaurEntity(false);
+        PokemonEntity squirtle = PokemonMockUtils.getMockedSquirtleEntity(false);
 
         List<PokemonEntity> pokemonToSave = List.of(charmander, bulbasaur, squirtle);
 
@@ -102,7 +103,7 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_Update_ReturnUpdatedPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity pokemon = PokemonMockUtils.getMockedPikachuEntity();
+        PokemonEntity pokemon = PokemonMockUtils.getMockedPikachuEntity(false);
         pokemonRepository.save(pokemon);
 
         /* ***************** ACT ***************** */
@@ -124,7 +125,7 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_Delete_ReturnedEmptyPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity pokemon = PokemonMockUtils.getMockedBlastoiseEntity();
+        PokemonEntity pokemon = PokemonMockUtils.getMockedBlastoiseEntity(false);
         pokemonRepository.save(pokemon);
 
         /* ***************** ACT ***************** */
