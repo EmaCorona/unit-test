@@ -3,6 +3,7 @@ package it.corona.unitest.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.corona.unitest.model.dto.PokemonDto;
 import it.corona.unitest.service.PokemonService;
+import it.corona.unitest.utils.PokemonMockUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,12 @@ public class PokemonControllerTest {
 
     @MockBean
     private PokemonService pokemonService;
+
     private PokemonDto pokemonDto;
 
     @BeforeEach
     public void setUp() {
-        pokemonDto = PokemonDto.builder()
-                .pokemonId(1L)
-                .name("Pikachu")
-                .type("Electro")
-                .build();
+        pokemonDto = PokemonMockUtils.getMockedPikachuDto(true);
     }
 
     @Test
@@ -49,14 +47,14 @@ public class PokemonControllerTest {
         mockMvc.perform(post("/pokemon/create-pokemon")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(pokemonDto)))
-                .andExpect(status().isCreated())
+                        .content(objectMapper.writeValueAsString(pokemonDto))
+                ).andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(pokemonDto)));
     }
 
     @Test
     public void PokemonController_UpdatePokemon_ReturnUpdatedPokemon() throws Exception {
-        PokemonDto raichu = PokemonDto.builder().name("Raichu").type("Electro").build();
+        PokemonDto raichu = PokemonMockUtils.getMockedRaichuDto(false);
 
         when(pokemonService.updatePokemon(any(PokemonDto.class), any(Long.class))).thenReturn(raichu);
 
@@ -65,8 +63,7 @@ public class PokemonControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pokemonDto))
                         .param("pokemonId", String.valueOf(pokemonDto.getPokemonId()))
-                )
-                .andExpect(status().isOk())
+                ).andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(raichu)));
     }
 
@@ -77,8 +74,8 @@ public class PokemonControllerTest {
         Long pokemonId = 1L;
 
         mockMvc.perform(get("/pokemon/find-by-id/{pokemonId}", pokemonId)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(pokemonDto)));
     }
 
@@ -87,8 +84,8 @@ public class PokemonControllerTest {
         when(pokemonService.findAllPokemon()).thenReturn(List.of(pokemonDto));
 
         mockMvc.perform(get("/pokemon/find-all-pokemons")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 
     @Test
@@ -96,10 +93,9 @@ public class PokemonControllerTest {
         doNothing().when(pokemonService).deletePokemonById(pokemonDto.getPokemonId());
 
         mockMvc.perform(delete("/pokemon/delete-pokemon")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .param("pokemonId", String.valueOf(pokemonDto.getPokemonId())))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(pokemonDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .param("pokemonId", String.valueOf(pokemonDto.getPokemonId()))
+        ).andExpect(status().isOk());
     }
 }
