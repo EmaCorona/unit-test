@@ -1,6 +1,8 @@
 package it.corona.unitest.repository;
 
+import it.corona.unitest.enums.PokemonType;
 import it.corona.unitest.model.entity.PokemonEntity;
+import it.corona.unitest.utils.PokemonMockUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -14,6 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class PokemonRepositoryCustomTest {
+
     private final PokemonRepository pokemonRepository;
 
     @Autowired
@@ -24,20 +27,20 @@ public class PokemonRepositoryCustomTest {
     @Test
     public void PokemonRepository_FindByType_ReturnPokemonWithThatType() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
-        PokemonEntity charmeleon = PokemonEntity.builder().name("Charmeleon").type("Fire").build();
-        PokemonEntity charizard = PokemonEntity.builder().name("Charizard").type("Fire").build();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
+        PokemonEntity charmeleon = PokemonMockUtils.getMockedCharmeleonEntity();
+        PokemonEntity charizard = PokemonMockUtils.getMockedCharizardEntity();
 
-        pokemonRepository.save(charmander);
-        pokemonRepository.save(charmeleon);
-        pokemonRepository.save(charizard);
+        List<PokemonEntity> pokemonToSave = List.of(charmander, charmeleon, charizard);
+
+        pokemonRepository.saveAll(pokemonToSave);
 
         /* ***************** ACT ***************** */
-        List<PokemonEntity> firePokemons = pokemonRepository.findByType("Fire");
+        List<PokemonEntity> firePokemons = pokemonRepository.findByType(PokemonType.FIRE.getType());
 
         /* ***************** ASSERT ***************** */
         assertThat(firePokemons).isNotNull();
         assertThat(firePokemons.size()).isEqualTo(3);
-        assertThat(firePokemons.stream().allMatch(pokemon -> pokemon.getType().equals("Fire"))).isTrue();
+        assertThat(firePokemons.stream().allMatch(pokemon -> pokemon.getType().equals(PokemonType.FIRE.getType()))).isTrue();
     }
 }

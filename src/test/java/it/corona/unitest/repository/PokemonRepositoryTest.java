@@ -1,13 +1,15 @@
 package it.corona.unitest.repository;
 
+import it.corona.unitest.enums.PokemonEnum;
+import it.corona.unitest.enums.PokemonType;
 import it.corona.unitest.model.entity.PokemonEntity;
+import it.corona.unitest.utils.PokemonMockUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,46 +28,44 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_Save_ReturnSavedPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity mockedPokemon = PokemonEntity.builder().name("Pikachu").type("Electro").build();
+        PokemonEntity pokemon = PokemonMockUtils.getMockedPikachuEntity();
 
         /* ***************** ACT ***************** */
-        PokemonEntity savedPokemon = pokemonRepository.save(mockedPokemon);
+        PokemonEntity savedPokemon = pokemonRepository.save(pokemon);
 
         /* ***************** ASSERT ***************** */
         assertThat(savedPokemon).isNotNull();
-        assertThat(savedPokemon).isEqualTo(mockedPokemon);
         assertThat(savedPokemon.getPokemonId()).isGreaterThan(0);
-        assertThat(savedPokemon.getName()).isEqualTo("Pikachu");
+        assertThat(savedPokemon.getPokedexId()).isEqualTo(PokemonEnum.PIKACHU.getPokedexId());
+        assertThat(savedPokemon.getName()).isEqualTo(PokemonEnum.PIKACHU.getPokemonName());
+        assertThat(savedPokemon.getType()).isEqualTo(PokemonType.ELECTRIC.getType());
     }
 
     @Test
     public void PokemonRepository_SaveAll_ReturnSavedPokemons() {
         /* ***************** ARRANGE ***************** */
-        List<PokemonEntity> mockedPokemons = new ArrayList<>();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
+        PokemonEntity bulbasaur = PokemonMockUtils.getMockedBulbasaurEntity();
+        PokemonEntity squirtle = PokemonMockUtils.getMockedSquirtleEntity();
 
-        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
-        PokemonEntity bulbasaur = PokemonEntity.builder().name("Bulbasaur").type("Grass").build();
-        PokemonEntity squirtle = PokemonEntity.builder().name("Squirtle").type("Water").build();
-
-        mockedPokemons.add(charmander);
-        mockedPokemons.add(bulbasaur);
-        mockedPokemons.add(squirtle);
+        List<PokemonEntity> mockedPokemons = List.of(charmander, squirtle, bulbasaur);
 
         /* ***************** ACT ***************** */
         List<PokemonEntity> savedPokemons = pokemonRepository.saveAll(mockedPokemons);
 
         /* ***************** ASSERT ***************** */
         assertThat(savedPokemons).isNotNull();
-        assertThat(savedPokemons).isEqualTo(mockedPokemons);
         assertThat(savedPokemons.size()).isEqualTo(mockedPokemons.size()).isEqualTo(3);
         assertThat(savedPokemons.getFirst().getPokemonId()).isGreaterThan(0);
-        assertThat(savedPokemons.getFirst().getName()).isEqualTo("Charmander");
+        assertThat(savedPokemons.getFirst().getName()).isEqualTo(PokemonEnum.CHARMANDER.getPokemonName());
+        assertThat(savedPokemons.getFirst().getPokedexId()).isEqualTo(PokemonEnum.CHARMANDER.getPokedexId());
+        assertThat(savedPokemons.getFirst().getType()).isEqualTo(PokemonType.FIRE.getType());
     }
 
     @Test
     public void PokemonRepository_FindById_ReturnOnePokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
 
         pokemonRepository.save(charmander);
 
@@ -74,20 +74,21 @@ public class PokemonRepositoryTest {
 
         /* ***************** ASSERT ***************** */
         assertThat(returnedPokemon).isNotNull();
-        assertThat(returnedPokemon.getName()).isEqualTo("Charmander");
-        assertThat(returnedPokemon.getType()).isEqualTo("Fire");
+        assertThat(returnedPokemon.getName()).isEqualTo(PokemonEnum.CHARMANDER.getPokemonName());
+        assertThat(returnedPokemon.getPokedexId()).isEqualTo(PokemonEnum.CHARMANDER.getPokedexId());
+        assertThat(returnedPokemon.getType()).isEqualTo(PokemonType.FIRE.getType());
     }
 
     @Test
-    public void PokemonRepository_FindAll_ReturnsMoreThanOnePokemon() {
+    public void PokemonRepository_FindAll_ReturnsAllPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity charmander = PokemonEntity.builder().name("Charmander").type("Fire").build();
-        PokemonEntity bulbasaur = PokemonEntity.builder().name("Bulbasaur").type("Grass").build();
-        PokemonEntity squirtle = PokemonEntity.builder().name("Squirtle").type("Water").build();
+        PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity();
+        PokemonEntity bulbasaur = PokemonMockUtils.getMockedBulbasaurEntity();
+        PokemonEntity squirtle = PokemonMockUtils.getMockedSquirtleEntity();
 
-        pokemonRepository.save(charmander);
-        pokemonRepository.save(bulbasaur);
-        pokemonRepository.save(squirtle);
+        List<PokemonEntity> pokemonToSave = List.of(charmander, bulbasaur, squirtle);
+
+        pokemonRepository.saveAll(pokemonToSave);
 
         /* ***************** ACT ***************** */
         List<PokemonEntity> pokemonList = pokemonRepository.findAll();
@@ -101,11 +102,13 @@ public class PokemonRepositoryTest {
     @Test
     public void PokemonRepository_Update_ReturnUpdatedPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity pokemon = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        PokemonEntity pokemon = PokemonMockUtils.getMockedPikachuEntity();
         pokemonRepository.save(pokemon);
 
         /* ***************** ACT ***************** */
-        pokemon.setName("Charmeleon");
+        pokemon.setName(PokemonEnum.RAICHU.getPokemonName());
+        pokemon.setPokedexId(PokemonEnum.RAICHU.getPokedexId());
+
         pokemonRepository.save(pokemon);
 
         PokemonEntity updatedPokemon = pokemonRepository.findById(pokemon.getPokemonId()).get();
@@ -113,14 +116,15 @@ public class PokemonRepositoryTest {
         /* ***************** ASSERT ***************** */
         assertThat(updatedPokemon).isNotNull();
         assertThat(updatedPokemon.getPokemonId()).isGreaterThan(0);
-        assertThat(updatedPokemon.getName()).isEqualTo("Charmeleon");
-        assertThat(updatedPokemon.getType()).isEqualTo("Fire");
+        assertThat(updatedPokemon.getName()).isEqualTo(PokemonEnum.RAICHU.getPokemonName());
+        assertThat(updatedPokemon.getPokedexId()).isEqualTo(PokemonEnum.RAICHU.getPokedexId());
+        assertThat(updatedPokemon.getType()).isEqualTo(PokemonType.ELECTRIC.getType());
     }
 
     @Test
-    public void PokemonRepository_Delete_ReturnedPokemonIsEmpty() {
+    public void PokemonRepository_Delete_ReturnedEmptyPokemon() {
         /* ***************** ARRANGE ***************** */
-        PokemonEntity pokemon = PokemonEntity.builder().name("Charmander").type("Fire").build();
+        PokemonEntity pokemon = PokemonMockUtils.getMockedBlastoiseEntity();
         pokemonRepository.save(pokemon);
 
         /* ***************** ACT ***************** */
