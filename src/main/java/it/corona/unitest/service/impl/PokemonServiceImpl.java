@@ -1,6 +1,7 @@
 package it.corona.unitest.service.impl;
 
 import it.corona.unitest.exception.PokemonNotFoundException;
+import it.corona.unitest.model.dto.CreatePokemonRequestDTO;
 import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
 import it.corona.unitest.model.dto.PokemonDto;
 import it.corona.unitest.model.dto.ResponseDTO;
@@ -26,12 +27,44 @@ public class PokemonServiceImpl implements PokemonService {
     private final PokemonMapper pokemonMapper;
 
     @Override
-    public PokemonDto createPokemon(PokemonDto pokemonDto) {
-        log.info("REQUEST START - About to create the requested pokemon");
-        PokemonEntity pokemonEntity = pokemonMapper.mapToEntity(pokemonDto);
-        PokemonEntity savedPokemon = pokemonRepository.save(pokemonEntity);
-        log.info("REQUEST END - Pokemon created");
-        return pokemonMapper.mapToDto(savedPokemon);
+    public ResponseDTO createPokemon(CreatePokemonRequestDTO requestDTO) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try {
+            if (!pokemonRepository.existsByName(requestDTO.getPokemonName())) {
+                log.info("About to create the requested pokemon");
+
+                PokemonEntity pokemonToCreate = PokemonEntity.builder()
+                        .pokedexId(requestDTO.getPokedexId())
+                        .name(requestDTO.getPokemonName())
+                        .type(requestDTO.getPokemonType())
+                        .build();
+
+                PokemonEntity savedPokemon = pokemonRepository.save(pokemonToCreate);
+                PokemonDTO pokemonDTO = pokemonMapper.mapToDto(savedPokemon);
+
+                log.info("Pokemon successfully created");
+
+                responseDTO.setPokemonDTO(pokemonDTO);
+                responseDTO.setHttpStatusCode(HttpStatus.CREATED.value());
+
+            } else {
+                String error = "Pokemon already exists";
+                responseDTO.setError(error);
+                responseDTO.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
+                log.info(error);
+                return responseDTO;
+            }
+
+        } catch (Exception e) {
+            String error = "An unexpected error occured during the creation of the pokemon";
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.info("{}: {}", error, requestDTO.getPokemonName());
+            return responseDTO;
+        }
+
+        return responseDTO;
     }
 
     @Override

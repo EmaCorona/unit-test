@@ -19,6 +19,10 @@ paths:
       responses:
         '200':
           description: Pokemon successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
         '400':
           description: Invalid request
           content:
@@ -82,13 +86,12 @@ components:
     CreatePokemonRequestDTO:
       type: object
       properties:
-        pokemonId:
-          type: integer
-          format: int64
         pokedexId:
           type: integer
           format: int64
         pokemonName:
+          type: string
+        pokemonType:
           type: string
     UpdatePokemonRequestDTO:
       type: object
@@ -112,6 +115,8 @@ components:
     ResponseDTO:
       type: object
       properties:
+        PokemonDTO:
+          $ref: '#/components/schemas/PokemonDTO'
         pokemonId:
           type: integer
           format: int64
@@ -120,6 +125,7 @@ components:
           format: int64
         pokemonName:
           type: string
+        pokemonType:
+          type: string
         httpStatusCode:
           type: integer
-          description: "HTTPStatus of the response"

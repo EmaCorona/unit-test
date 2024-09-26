@@ -1,5 +1,6 @@
 package it.corona.unitest.service;
 
+import it.corona.unitest.model.dto.CreatePokemonRequestDTO;
 import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
 import it.corona.unitest.model.dto.PokemonDto;
 import it.corona.unitest.model.dto.ResponseDTO;
@@ -9,7 +10,7 @@ import java.util.List;
 
 public interface PokemonService {
     @Transactional
-    PokemonDto createPokemon(PokemonDto pokemonDto);
+    ResponseDTO createPokemon(CreatePokemonRequestDTO requestDTO);
     PokemonDto findById(Long pokemonId);
     List<PokemonDto> findAllPokemon();
     @Transactional
