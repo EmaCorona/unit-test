@@ -12,6 +12,7 @@ import java.util.Date;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(PokemonNotFoundException.class)
     public ResponseEntity<ErrorMessageDto> handleNotFoundException(PokemonNotFoundException ex) {
         return getErrorMessage(HttpStatus.NOT_FOUND, ex);

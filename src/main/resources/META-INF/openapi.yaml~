@@ -139,7 +139,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseDTO'
+                $ref: '#/components/schemas/PokemonDTO'
         '400':
           description: Invalid request
           content:
