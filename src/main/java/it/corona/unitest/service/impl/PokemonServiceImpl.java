@@ -105,18 +105,33 @@ public class PokemonServiceImpl implements PokemonService {
 
     @Override
     public ResponseDTO deletePokemonById(DeletePokemonRequestDTO requestDTO) {
-        log.info("About to delete the requested Pokemon");
-
-        PokemonEntity pokemonToDelete = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
-        pokemonRepository.delete(pokemonToDelete);
-
         ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setPokemonId(pokemonToDelete.getPokemonId());
-        responseDTO.setPokedexId(pokemonToDelete.getPokedexId());
-        responseDTO.setPokemonName(pokemonToDelete.getName());
-        responseDTO.setHttpStatusCode(HttpStatus.OK.value());
 
-        log.info("Pokemon deleted");
+        try {
+            log.info("About to delete the requested Pokemon");
+
+            PokemonEntity pokemonToDelete = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
+            pokemonRepository.delete(pokemonToDelete);
+
+            responseDTO.setPokemonDTO(pokemonMapper.mapToDto(pokemonToDelete));
+            responseDTO.setHttpStatusCode(HttpStatus.OK.value());
+
+            log.info("Pokemon deleted");
+
+        } catch (PokemonNotFoundException e) {
+            String error = "Pokemon to delete was not found";
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
+            log.info(error);
+            return responseDTO;
+
+        } catch (Exception e) {
+            String error = "An unexpected error occurred during the deletion of the pokemon";
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.info("{}: {}", error, requestDTO.getPokemonName());
+            return responseDTO;
+        }
 
         return responseDTO;
     }
