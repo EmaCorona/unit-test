@@ -15,7 +15,7 @@ paths:
               $ref: '#/components/schemas/CreatePokemonRequestDTO'
         required: true
       responses:
-        '200':
+        '201':
           description: Pokemon successfully created
           content:
             application/json:
@@ -23,6 +23,12 @@ paths:
                 $ref: '#/components/schemas/ResponseDTO'
         '400':
           description: Invalid request
+          content:
+            '*/*':
+              schema:
+                type: string
+        '500':
+          description: Internal server error
           content:
             '*/*':
               schema:
@@ -46,6 +52,18 @@ paths:
                 $ref: '#/components/schemas/ResponseDTO'
         '400':
           description: Invalid request
+          content:
+            '*/*':
+              schema:
+                type: string
+        '404':
+          description: Pokemon not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '500':
+          description: Internal server error
           content:
             '*/*':
               schema:
@@ -79,19 +97,48 @@ paths:
             '*/*':
               schema:
                 type: string
-  /pokemon/find-all-pokemons:
+        '500':
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+  /pokemon/find-pokemon-by-id/{pokemonId}:
     get:
-      summary: Find All Pokemons
-      operationId: findAllPokemon
+      summary: Find Pokemon By Id
+      operationId: findPokemonById
+      parameters:
+        - name: pokemonId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Pokemon successfully found
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PokemonDTO'
+                $ref: '#/components/schemas/ResponseDTO'
+        '400':
+          description: Invalid request
+          content:
+            '*/*':
+              schema:
+                type: string
+        '404':
+          description: Pokemon not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
 components:
   schemas:
     CreatePokemonRequestDTO:

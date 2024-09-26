@@ -10,9 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -65,28 +62,13 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
-    public PokemonDto findById(Long pokemonId) {
-        log.info("REQUEST START - About to request the pokemon with the specified pokemonId");
-        PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
-        PokemonDto pokemonDto = pokemonMapper.mapToDto(pokemonEntity);
-        log.info("REQUEST END - Pokemon retrieved");
-        return pokemonDto;
-    }
-
-    @Override
-    public List<PokemonDto> findAllPokemon() {
-        log.info("REQUEST START - About to request all the pokemons");
-
-        List<PokemonEntity> entities = pokemonRepository.findAll();
-
-        if (!CollectionUtils.isEmpty(entities)) {
-            List<PokemonDto> pokemonsList = pokemonMapper.mapListToDto(entities);
-            log.info("REQUEST END - Pokemon list retrieved");
-            return pokemonsList;
-        } else {
-            log.error("REQUEST ERROR: No Pokemon was found");
-            throw new PokemonNotFoundException();
-        }
+    public PokemonDTO findById(Long pokemonId) {
+//        log.info("REQUEST START - About to request the pokemon with the specified pokemonId");
+//        PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
+//        PokemonDto pokemonDto = pokemonMapper.mapToDto(pokemonEntity);
+//        log.info("REQUEST END - Pokemon retrieved");
+//        return pokemonDto;
+        return null;
     }
 
     @Override

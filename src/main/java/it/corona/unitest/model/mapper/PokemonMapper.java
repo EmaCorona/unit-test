@@ -1,6 +1,6 @@
 package it.corona.unitest.model.mapper;
 
-import it.corona.unitest.model.dto.PokemonDto;
+import it.corona.unitest.model.dto.PokemonDTO;
 import it.corona.unitest.model.entity.PokemonEntity;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,24 +15,24 @@ public class PokemonMapper {
 
     private final ModelMapper modelMapper;
 
-    public List<PokemonDto> mapListToDto(List<PokemonEntity> entitiesList) {
+    public List<PokemonDTO> mapListToDto(List<PokemonEntity> entitiesList) {
         return entitiesList
                 .stream()
-                .map(entity -> modelMapper.map(entity, PokemonDto.class))
+                .map(entity -> modelMapper.map(entity, PokemonDTO.class))
                 .toList();
     }
 
-    public List<PokemonEntity> mapListToEntities(List<PokemonDto> dtoList) {
+    public List<PokemonEntity> mapListToEntities(List<PokemonDTO> dtoList) {
         return dtoList.stream()
                 .map(dto -> modelMapper.map(dto, PokemonEntity.class))
                 .toList();
     }
 
-    public PokemonDto mapToDto(PokemonEntity entity) {
-        return modelMapper.map(entity, PokemonDto.class);
+    public PokemonDTO mapToDto(PokemonEntity entity) {
+        return modelMapper.map(entity, PokemonDTO.class);
     }
 
-    public PokemonEntity mapToEntity(PokemonDto dto) {
+    public PokemonEntity mapToEntity(PokemonDTO dto) {
         return modelMapper.map(dto, PokemonEntity.class);
     }
 }

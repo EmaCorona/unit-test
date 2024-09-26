@@ -1,7 +1,6 @@
 package it.corona.unitest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.corona.unitest.model.dto.PokemonDto;
 import it.corona.unitest.service.PokemonService;
 import it.corona.unitest.utils.PokemonMockUtils;
 import org.junit.jupiter.api.BeforeEach;

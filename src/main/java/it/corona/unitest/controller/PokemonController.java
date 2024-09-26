@@ -1,6 +1,9 @@
 package it.corona.unitest.controller;
 
-import it.corona.unitest.model.dto.*;
+import it.corona.unitest.model.dto.CreatePokemonRequestDTO;
+import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
+import it.corona.unitest.model.dto.ResponseDTO;
+import it.corona.unitest.model.dto.UpdatePokemonRequestDTO;
 import it.corona.unitest.service.PokemonService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
@@ -39,14 +40,7 @@ public class PokemonController implements PokemonApi {
     }
 
     @GetMapping("/find-by-id/{pokemonId}")
-    public ResponseEntity<PokemonDto> findById(@PathVariable Long pokemonId) {
-        return null;
-    }
-
-    @GetMapping("/find-all-pokemons")
-    public ResponseEntity<List<PokemonDto>> findAllPokemon() {
-        log.info(REQUEST_START + "findAllPokemon");
-        log.info(REQUEST_END + "findAllPokemon");
+    public ResponseEntity<PokemonDTO> findById(@PathVariable Long pokemonId) {
         return null;
     }
 
