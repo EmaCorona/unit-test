@@ -62,13 +62,37 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
-    public PokemonDTO findById(Long pokemonId) {
-//        log.info("REQUEST START - About to request the pokemon with the specified pokemonId");
-//        PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
-//        PokemonDto pokemonDto = pokemonMapper.mapToDto(pokemonEntity);
-//        log.info("REQUEST END - Pokemon retrieved");
-//        return pokemonDto;
-        return null;
+    public ResponseDTO findPokemonById(Long pokemonId) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try {
+            log.info("About to request the desired pokemon");
+            PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
+            log.info("Pokemon requested");
+
+            log.info("Mapping Entity to Dto");
+            PokemonDTO pokemonDTO = pokemonMapper.mapToDto(pokemonEntity);
+            responseDTO.setPokemonDTO(pokemonDTO);
+            log.info("Mapped Entity to Dto");
+
+            responseDTO.setHttpStatusCode(HttpStatus.OK.value());
+
+        } catch (PokemonNotFoundException e) {
+            String error = "Pokemon with id: " + pokemonId + " was not found";
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
+            log.info(error);
+            return responseDTO;
+
+        } catch (Exception e) {
+            String error = "An unexpected error occurred during the request of the pokemon with id: " + pokemonId;
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.info("{}: {}", error, pokemonId);
+            return responseDTO;
+        }
+
+        return responseDTO;
     }
 
     @Override

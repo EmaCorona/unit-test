@@ -103,6 +103,25 @@ paths:
             '*/*':
               schema:
                 type: string
+  /pokemon/find-all-pokemons:
+    get:
+      summary: Find All Pokemons
+      operationId: findAllPokemon
+      responses:
+        '200':
+          description: Pokemon successfully found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PokemonDTO'
+        '500':
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
   /pokemon/find-pokemon-by-id/{pokemonId}:
     get:
       summary: Find Pokemon By Id
@@ -120,7 +139,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseDTO'
+                $ref: '#/components/schemas/PokemonDTO'
         '400':
           description: Invalid request
           content:
@@ -177,10 +196,18 @@ components:
       properties:
         PokemonDTO:
           $ref: '#/components/schemas/PokemonDTO'
+        pokemonId:
+          type: integer
+          format: int64
+        pokedexId:
+          type: integer
+          format: int64
+        pokemonName:
+          type: string
+        pokemonType:
+          type: string
         httpStatusCode:
           type: integer
-        error:
-          type: string
     PokemonDTO:
       type: object
       properties:

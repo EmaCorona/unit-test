@@ -8,8 +8,6 @@ import it.corona.unitest.service.PokemonService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -39,9 +37,12 @@ public class PokemonController implements PokemonApi {
         return ResponseEntity.status(responseDTO.getHttpStatusCode()).body(responseDTO);
     }
 
-    @GetMapping("/find-by-id/{pokemonId}")
-    public ResponseEntity<PokemonDTO> findById(@PathVariable Long pokemonId) {
-        return null;
+    @Override
+    public ResponseEntity<ResponseDTO> findPokemonById(Long pokemonId) {
+        log.info(REQUEST_START + "FindPokemonById: {}", pokemonId);
+        ResponseDTO responseDTO = pokemonService.findPokemonById(pokemonId);
+        log.info(REQUEST_END + "FindPokemonById: {}", pokemonId);
+        return ResponseEntity.status(responseDTO.getHttpStatusCode()).body(responseDTO);
     }
 
     @Override
