@@ -1,6 +1,9 @@
 package it.corona.unitest.controller;
 
-import it.corona.unitest.model.dto.*;
+import it.corona.unitest.model.dto.CreatePokemonRequestDTO;
+import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
+import it.corona.unitest.model.dto.PokemonDto;
+import it.corona.unitest.model.dto.UpdatePokemonRequestDTO;
 import it.corona.unitest.service.PokemonService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +53,10 @@ public class PokemonController implements PokemonApi {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> deletePokemon(DeletePokemonRequestDTO requestDTO) {
+    public ResponseEntity<Void> deletePokemon(DeletePokemonRequestDTO requestDTO) {
         log.info(REQUEST_START + "DeletePokemon: {}", requestDTO.getPokemonName());
-        ResponseDTO responseDTO = pokemonService.deletePokemonById(requestDTO);
+        pokemonService.deletePokemonById(requestDTO);
         log.info(REQUEST_END + "DeletePokemon: {}", requestDTO.getPokemonName());
-        return ResponseEntity.status(responseDTO.getHttpStatusCode()).body(responseDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

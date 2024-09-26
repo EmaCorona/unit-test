@@ -1,0 +1,125 @@
+openapi: 3.0.1
+info:
+  title: Pokemon Api
+  description: Pokemon Test Api Definition
+  version: v1
+paths:
+  /pokemon/create-pokemon:
+    post:
+      tags:
+        - PokemonController
+      summary: Create Pokemon
+      operationId: createPokemon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePokemonRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Pokemon successfully created
+        '400':
+          description: Invalid request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /pokemon/update-pokemon:
+    put:
+      tags:
+        - PokemonController
+      summary: Update Pokemon
+      operationId: updatePokemon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePokemonRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Pokemon successfully updated
+        '400':
+          description: Invalid request
+          content:
+            '*/*':
+              schema:
+                type: string
+  /pokemon/delete-pokemon:
+    delete:
+      tags:
+        - Delete Pokemon
+      summary: Delete Pokemon
+      operationId: deletePokemon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeletePokemonRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Pokemon successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '404':
+          description: Pokemon not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Invalid request
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    CreatePokemonRequestDTO:
+      type: object
+      properties:
+        pokemonId:
+          type: integer
+          format: int64
+        pokedexId:
+          type: integer
+          format: int64
+        pokemonName:
+          type: string
+    UpdatePokemonRequestDTO:
+      type: object
+      properties:
+        pokemonId:
+          type: integer
+          format: int64
+        pokedexId:
+          type: integer
+          format: int64
+        pokemonName:
+          type: string
+    DeletePokemonRequestDTO:
+      type: object
+      properties:
+        pokemonId:
+          type: integer
+          format: int64
+        pokemonName:
+          type: string
+    ResponseDTO:
+      type: object
+      properties:
+        pokemonId:
+          type: integer
+          format: int64
+        pokedexId:
+          type: integer
+          format: int64
+        pokemonName:
+          type: string
+        httpStatusCode:
+          type: integer
+          description: "HTTPStatus of the response"

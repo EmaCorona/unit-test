@@ -71,7 +71,14 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
-    public ResponseDTO deletePokemonById(DeletePokemonRequestDTO requestDTO) {
+    public void deletePokemonById(DeletePokemonRequestDTO requestDTO) {
+        log.info("About to delete the requested Pokemon");
+        PokemonEntity pokemonToDelete = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
+        pokemonRepository.delete(pokemonToDelete);
+        log.info("Pokemon deleted");
+    }
+
+    public ResponseDTO deletePokemonById2(DeletePokemonRequestDTO requestDTO) {
         log.info("About to delete the requested Pokemon");
 
         PokemonEntity pokemonToDelete = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
