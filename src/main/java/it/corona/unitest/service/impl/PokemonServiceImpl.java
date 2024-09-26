@@ -1,10 +1,7 @@
 package it.corona.unitest.service.impl;
 
 import it.corona.unitest.exception.PokemonNotFoundException;
-import it.corona.unitest.model.dto.CreatePokemonRequestDTO;
-import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
-import it.corona.unitest.model.dto.PokemonDto;
-import it.corona.unitest.model.dto.ResponseDTO;
+import it.corona.unitest.model.dto.*;
 import it.corona.unitest.model.entity.PokemonEntity;
 import it.corona.unitest.model.mapper.PokemonMapper;
 import it.corona.unitest.repository.PokemonRepository;
@@ -93,14 +90,40 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
-    public PokemonDto updatePokemon(PokemonDto pokemonDto, Long pokemonId) {
-        log.info("REQUEST START - About to update the requested Pokemon");
-        PokemonEntity pokemonEntity = pokemonRepository.findById(pokemonId).orElseThrow(PokemonNotFoundException::new);
-        pokemonEntity.setName(pokemonDto.getName());
-        pokemonEntity.setType(pokemonDto.getType());
-        pokemonRepository.save(pokemonEntity);
-        log.info("REQUEST END - Pokemon Updated");
-        return pokemonMapper.mapToDto(pokemonEntity);
+    public ResponseDTO updatePokemon(UpdatePokemonRequestDTO requestDTO) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try {
+            log.info("About to update the requested Pokemon: {}", requestDTO.getPokemonName());
+            PokemonEntity pokemonToUpdate = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
+            pokemonToUpdate.setPokedexId(requestDTO.getPokedexId());
+            pokemonToUpdate.setName(requestDTO.getPokemonName());
+            pokemonToUpdate.setType(requestDTO.getPokemonType());
+
+            PokemonEntity savedPokemon = pokemonRepository.save(pokemonToUpdate);
+            PokemonDTO pokemonDTO = pokemonMapper.mapToDto(savedPokemon);
+
+            log.info("Pokemon updated");
+
+            responseDTO.setPokemonDTO(pokemonDTO);
+            responseDTO.setHttpStatusCode(HttpStatus.OK.value());
+
+        } catch (PokemonNotFoundException e) {
+            String error = "Pokemon to update was not found";
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
+            log.info(error);
+            return responseDTO;
+
+        } catch (Exception e) {
+            String error = "An unexpected error occurred during the update of the pokemon";
+            responseDTO.setError(error);
+            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.info("{}: {}", error, requestDTO.getPokemonName());
+            return responseDTO;
+        }
+
+        return responseDTO;
     }
 
     @Override

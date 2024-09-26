@@ -40,6 +40,10 @@ paths:
       responses:
         '200':
           description: Pokemon successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
         '400':
           description: Invalid request
           content:
@@ -110,6 +114,8 @@ components:
           type: integer
           format: int64
         pokemonName:
+          type: string
+        pokemonType:
           type: string
     DeletePokemonRequestDTO:
       type: object

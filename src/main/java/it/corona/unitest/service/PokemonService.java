@@ -1,9 +1,6 @@
 package it.corona.unitest.service;
 
-import it.corona.unitest.model.dto.CreatePokemonRequestDTO;
-import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
-import it.corona.unitest.model.dto.PokemonDto;
-import it.corona.unitest.model.dto.ResponseDTO;
+import it.corona.unitest.model.dto.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -14,6 +11,6 @@ public interface PokemonService {
     PokemonDto findById(Long pokemonId);
     List<PokemonDto> findAllPokemon();
     @Transactional
-    PokemonDto updatePokemon(PokemonDto pokemonDto, Long pokemonId);
+    ResponseDTO updatePokemon(UpdatePokemonRequestDTO requestDTO);
     ResponseDTO deletePokemonById(DeletePokemonRequestDTO requestDTO);
 }

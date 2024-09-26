@@ -24,17 +24,18 @@ public class PokemonController implements PokemonApi {
 
     @Override
     public ResponseEntity<ResponseDTO> createPokemon(CreatePokemonRequestDTO requestDTO) {
-        log.info("REQUEST START - CreatePokemon: {}", requestDTO.getPokemonName());
+        log.info(REQUEST_START + "CreatePokemon: {}", requestDTO.getPokemonName());
         ResponseDTO responseDTO = pokemonService.createPokemon(requestDTO);
-        log.info("REQUEST END - CreatePokemon: {}", requestDTO.getPokemonName());
+        log.info(REQUEST_END + "CreatePokemon: {}", requestDTO.getPokemonName());
         return ResponseEntity.status(responseDTO.getHttpStatusCode()).body(responseDTO);
     }
 
     @Override
-    public ResponseEntity<Void> updatePokemon(UpdatePokemonRequestDTO requestDTO) {
+    public ResponseEntity<ResponseDTO> updatePokemon(UpdatePokemonRequestDTO requestDTO) {
         log.info(REQUEST_START + "UpdatePokemon: {}", requestDTO.getPokemonName());
+        ResponseDTO responseDTO = pokemonService.updatePokemon(requestDTO);
         log.info(REQUEST_END + "UpdatePokemon: {}", requestDTO.getPokemonName());
-        return null;
+        return ResponseEntity.status(responseDTO.getHttpStatusCode()).body(responseDTO);
     }
 
     @GetMapping("/find-by-id/{pokemonId}")
