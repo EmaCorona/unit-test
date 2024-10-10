@@ -11,4 +11,10 @@ spring:
 
 server:
   servlet:
-    context-path: /unit-test-application
+    context-path: /pokemon-api
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
