@@ -5,14 +5,14 @@ import it.corona.unitest.model.dto.DeletePokemonRequestDTO;
 import it.corona.unitest.model.dto.ResponseDTO;
 import it.corona.unitest.model.dto.UpdatePokemonRequestDTO;
 import it.corona.unitest.service.PokemonService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@AllArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class PokemonController implements PokemonApi {
 
     private final PokemonService pokemonService;
@@ -48,7 +48,7 @@ public class PokemonController implements PokemonApi {
     @Override
     public ResponseEntity<ResponseDTO> deletePokemon(DeletePokemonRequestDTO requestDTO) {
         log.info(REQUEST_START + "DeletePokemon: {}", requestDTO.getPokemonName());
-        ResponseDTO responseDTO = pokemonService.deletePokemonById(requestDTO);
+        ResponseDTO responseDTO = pokemonService.deletePokemon(requestDTO);
         log.info(REQUEST_END + "DeletePokemon: {}", requestDTO.getPokemonName());
         return ResponseEntity.status(responseDTO.getHttpStatusCode()).body(responseDTO);
     }

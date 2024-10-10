@@ -9,8 +9,7 @@ public interface PokemonService {
     @Transactional
     ResponseDTO createPokemon(CreatePokemonRequestDTO requestDTO);
     ResponseDTO findPokemonById(Long pokemonId);
-    List<PokemonDTO> findAllPokemon();
     @Transactional
     ResponseDTO updatePokemon(UpdatePokemonRequestDTO requestDTO);
-    ResponseDTO deletePokemonById(DeletePokemonRequestDTO requestDTO);
+    ResponseDTO deletePokemon(DeletePokemonRequestDTO requestDTO);
 }
