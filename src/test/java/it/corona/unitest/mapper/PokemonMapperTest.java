@@ -1,6 +1,6 @@
 package it.corona.unitest.mapper;
 
-import it.corona.unitest.model.dto.PokemonDto;
+import it.corona.unitest.model.dto.PokemonDTO;
 import it.corona.unitest.model.entity.PokemonEntity;
 import it.corona.unitest.model.mapper.PokemonMapper;
 import it.corona.unitest.utils.PokemonMockUtils;
@@ -25,7 +25,7 @@ public class PokemonMapperTest {
     @Test
     public void PokemonMapper_MapToEntity_ReturnsCorrectEntity() {
         /* ***************** ARRANGE ***************** */
-        PokemonDto dto = PokemonMockUtils.getMockedPikachuDto(true);
+        PokemonDTO dto = PokemonMockUtils.getMockedPikachuDto(true);
 
         /* ***************** ACT ***************** */
         PokemonEntity resultEntity = pokemonMapper.mapToEntity(dto);
@@ -40,23 +40,23 @@ public class PokemonMapperTest {
     @Test
     public void PokemonMapper_MapToEntities_ReturnCorrectEntities() {
         /* ***************** ARRANGE ***************** */
-        PokemonDto pikachu = PokemonMockUtils.getMockedPikachuDto(true);
-        PokemonDto raichu = PokemonMockUtils.getMockedRaichuDto(true);
+        PokemonDTO pikachu = PokemonMockUtils.getMockedPikachuDto(true);
+        PokemonDTO raichu = PokemonMockUtils.getMockedRaichuDto(true);
 
-        List<PokemonDto> pokemonDtos = List.of(pikachu, raichu);
+        List<PokemonDTO> pokemonDtoList = List.of(pikachu, raichu);
 
         /* ***************** ACT ***************** */
-        List<PokemonEntity> resultEntities = pokemonMapper.mapListToEntities(pokemonDtos);
+        List<PokemonEntity> resultEntities = pokemonMapper.mapListToEntities(pokemonDtoList);
 
         assertThat(resultEntities).isNotNull();
         assertThat(resultEntities).isNotEmpty();
-        assertThat(resultEntities.size()).isEqualTo(pokemonDtos.size());
-        assertThat(resultEntities.getFirst().getPokemonId()).isEqualTo(pokemonDtos.getFirst().getPokemonId());
-        assertThat(resultEntities.getFirst().getPokedexId()).isEqualTo(pokemonDtos.getFirst().getPokedexId());
-        assertThat(resultEntities.getFirst().getName()).isEqualTo(pokemonDtos.getFirst().getName());
-        assertThat(resultEntities.getLast().getPokemonId()).isEqualTo(pokemonDtos.getLast().getPokemonId());
-        assertThat(resultEntities.getLast().getPokedexId()).isEqualTo(pokemonDtos.getLast().getPokedexId());
-        assertThat(resultEntities.getLast().getName()).isEqualTo(pokemonDtos.getLast().getName());
+        assertThat(resultEntities.size()).isEqualTo(pokemonDtoList.size());
+        assertThat(resultEntities.getFirst().getPokemonId()).isEqualTo(pokemonDtoList.getFirst().getPokemonId());
+        assertThat(resultEntities.getFirst().getPokedexId()).isEqualTo(pokemonDtoList.getFirst().getPokedexId());
+        assertThat(resultEntities.getFirst().getName()).isEqualTo(pokemonDtoList.getFirst().getName());
+        assertThat(resultEntities.getLast().getPokemonId()).isEqualTo(pokemonDtoList.getLast().getPokemonId());
+        assertThat(resultEntities.getLast().getPokedexId()).isEqualTo(pokemonDtoList.getLast().getPokedexId());
+        assertThat(resultEntities.getLast().getName()).isEqualTo(pokemonDtoList.getLast().getName());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PokemonMapperTest {
         PokemonEntity entity = PokemonMockUtils.getMockedPikachuEntity(true);
 
         /* ***************** ACT ***************** */
-        PokemonDto resultDto = pokemonMapper.mapToDto(entity);
+        PokemonDTO resultDto = pokemonMapper.mapToDto(entity);
 
         /* ***************** ASSERT ***************** */
         assertThat(resultDto.getPokemonId()).isEqualTo(entity.getPokemonId());
@@ -83,7 +83,7 @@ public class PokemonMapperTest {
         List<PokemonEntity> pokemonEntities = List.of(pikachu, raichu);
 
         /* ***************** ACT ***************** */
-        List<PokemonDto> resultDtos = pokemonMapper.mapListToDto(pokemonEntities);
+        List<PokemonDTO> resultDtos = pokemonMapper.mapListToDto(pokemonEntities);
 
         /* ***************** ASSERT ***************** */
         assertThat(resultDtos).isNotNull();
