@@ -5,12 +5,12 @@ import it.corona.unitest.model.entity.PokemonEntity;
 import it.corona.unitest.model.mapper.PokemonMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class PokemonMapperImpl implements PokemonMapper {
 

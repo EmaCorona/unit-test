@@ -1,4 +1,4 @@
-package it.corona.unitest.mapper;
+package it.corona.unitest.model.mapper;
 
 import it.corona.unitest.model.dto.PokemonDTO;
 import it.corona.unitest.model.entity.PokemonEntity;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 public class PokemonMapperTest {
 
+    @Spy
     @InjectMocks
     private PokemonMapperImpl pokemonMapper;
 
@@ -30,7 +32,7 @@ public class PokemonMapperTest {
     private ModelMapper modelMapper;
 
     @Test
-    void GivenValidDTO_MapToEntities_ReturnsMappedEntity() {
+    void GivenValidDto_MapToEntities_ReturnsMappedEntity() {
         /* ***************** ARRANGE ***************** */
         PokemonDTO dto = PokemonMockUtils.getMockedPikachuDto(false);
         PokemonEntity entity = PokemonMockUtils.getMockedPikachuEntity(false);
@@ -72,17 +74,22 @@ public class PokemonMapperTest {
 
     @Test
     void GivenValidEntity_MapToDto_ReturnsMappedDto() {
-//        /* ***************** ARRANGE ***************** */
-//        PokemonEntity entity = PokemonMockUtils.getMockedPikachuEntity(true);
-//
-//        /* ***************** ACT ***************** */
-//        PokemonDTO resultDto = pokemonMapper.mapToDto(entity);
-//
-//        /* ***************** ASSERT ***************** */
-//        assertThat(resultDto.getPokemonId()).isEqualTo(entity.getPokemonId());
-//        assertThat(resultDto.getPokedexId()).isEqualTo(entity.getPokedexId());
-//        assertThat(resultDto.getName()).isEqualTo(entity.getName());
-//        assertThat(resultDto.getType()).isEqualTo(entity.getType());
+        /* ***************** ARRANGE ***************** */
+        PokemonEntity entity = PokemonMockUtils.getMockedPikachuEntity(false);
+        PokemonDTO dto = PokemonMockUtils.getMockedPikachuDto(false);
+
+        when(modelMapper.map(entity, PokemonDTO.class)).thenReturn(dto);
+
+        /* ***************** ACT ***************** */
+        PokemonDTO resultDTO = pokemonMapper.mapToDto(entity);
+
+        /* ***************** ASSERT ***************** */
+        assertNotNull(resultDTO);
+        assertEquals(resultDTO.getPokedexId(), entity.getPokedexId());
+        assertEquals(resultDTO.getName(), entity.getName());
+        assertEquals(resultDTO.getType(), entity.getType());
+
+        verify(modelMapper).map(entity, PokemonDTO.class);
     }
 
     @Test
@@ -91,7 +98,7 @@ public class PokemonMapperTest {
         PokemonEntity entity = new PokemonEntity();
         PokemonDTO dto = new PokemonDTO();
 
-        when(modelMapper.map(any(), any())).thenReturn(dto);
+        when(modelMapper.map(entity, PokemonDTO.class)).thenReturn(dto);
 
         /* ***************** ACT ***************** */
         PokemonDTO result = pokemonMapper.mapToDto(entity);
@@ -102,84 +109,81 @@ public class PokemonMapperTest {
         assertThat(result.getPokedexId()).isNull();
         assertThat(result.getName()).isNull();
         assertThat(result.getType()).isNull();
+
+        verify(modelMapper).map(entity, PokemonDTO.class);
     }
 
     @Test
-    void GivenEmptyDtoList_MapToEntities_ReturnsEmptyEntitiesList() {
+    void GivenValidDtoList_MapToEntities_ReturnCorrectEntities() {
         /* ***************** ARRANGE ***************** */
-        when(modelMapper.map(any(), any())).thenReturn(null);
-
-        /* ***************** ACT ***************** */
-        List<PokemonEntity> result = pokemonMapper.mapListToEntities(List.of());
-
-        /* ***************** ASSERT ***************** */
-        assertNotNull(result);
-        assertThat(result).isEmpty();
-
-        verify(modelMapper, never()).map(any(), any());
-    }
-
-    @Test
-    public void GivenValidDtoList_MapToEntities_ReturnCorrectEntities() {
-        /* ***************** ARRANGE ***************** */
-        PokemonDTO pikachuDto = PokemonMockUtils.getMockedPikachuDto(true);
-        PokemonDTO raichuDto = PokemonMockUtils.getMockedRaichuDto(true);
-
         PokemonEntity pikachuEntity = PokemonMockUtils.getMockedPikachuEntity(true);
         PokemonEntity raichuEntity = PokemonMockUtils.getMockedRaichuEntity(true);
 
-        List<PokemonDTO> pokemonDtoList = List.of(pikachuDto, raichuDto);
+        List<PokemonEntity> pokemonEntityList = List.of(pikachuEntity, raichuEntity);
 
-        when(modelMapper.map(pikachuDto, PokemonEntity.class)).thenReturn(pikachuEntity);
-        when(modelMapper.map(raichuDto, PokemonEntity.class)).thenReturn(raichuEntity);
+        doReturn(pokemonEntityList).when(pokemonMapper).mapListToEntities(anyList());
 
         /* ***************** ACT ***************** */
-        List<PokemonEntity> resultEntities = pokemonMapper.mapListToEntities(pokemonDtoList);
+        List<PokemonEntity> resultList = pokemonMapper.mapListToEntities(anyList());
 
         /* ***************** ASSERT ***************** */
-        assertNotNull(resultEntities);
-        assertThat(resultEntities).isNotEmpty();
-        assertThat(resultEntities).hasSize(2);
+        assertNotNull(resultList);
+        assertThat(resultList).isNotEmpty();
+        assertEquals(resultList.getFirst().getPokedexId(), pikachuEntity.getPokedexId());
+        assertEquals(resultList.size(), 2);
 
-        verify(modelMapper).map(pikachuDto, PokemonEntity.class);
-        verify(modelMapper).map(raichuDto, PokemonEntity.class);
+        verify(pokemonMapper).mapListToEntities(anyList());
     }
 
     @Test
-    void GivenEmptyEntitiesList_MapToEntities_ReturnsEmptyDtoList() {
+    void GivenEmptyDtoList_MapToEntities_ReturnsEmptyEntities() {
         /* ***************** ARRANGE ***************** */
-        when(modelMapper.map(any(), any())).thenReturn(null);
+        doReturn(List.of()).when(pokemonMapper).mapListToEntities(any());
 
         /* ***************** ACT ***************** */
-        List<PokemonDTO> result = pokemonMapper.mapListToDto(List.of());
+        List<PokemonEntity> result = pokemonMapper.mapListToEntities(anyList());
 
         /* ***************** ASSERT ***************** */
         assertNotNull(result);
         assertThat(result).isEmpty();
 
-        verify(modelMapper, never()).map(any(), any());
+        verify(pokemonMapper).mapListToEntities(anyList());
     }
 
-//    @Test
-//    public void PokemonMapper_MapToDtoList_ReturnCorrectDtoList() {
-//        /* ***************** ARRANGE ***************** */
-//        PokemonEntity pikachu = PokemonMockUtils.getMockedPikachuEntity(true);
-//        PokemonEntity raichu = PokemonMockUtils.getMockedRaichuEntity(true);
-//
-//        List<PokemonEntity> pokemonEntities = List.of(pikachu, raichu);
-//
-//        /* ***************** ACT ***************** */
-//        List<PokemonDTO> resultDtos = pokemonMapper.mapListToDto(pokemonEntities);
-//
-//        /* ***************** ASSERT ***************** */
-//        assertThat(resultDtos).isNotNull();
-//        assertThat(resultDtos).isNotEmpty();
-//        assertThat(resultDtos.size()).isEqualTo(pokemonEntities.size());
-//        assertThat(resultDtos.getFirst().getPokemonId()).isEqualTo(pokemonEntities.getFirst().getPokemonId());
-//        assertThat(resultDtos.getFirst().getPokedexId()).isEqualTo(pokemonEntities.getFirst().getPokedexId());
-//        assertThat(resultDtos.getFirst().getName()).isEqualTo(pokemonEntities.getFirst().getName());
-//        assertThat(resultDtos.getLast().getPokemonId()).isEqualTo(pokemonEntities.getLast().getPokemonId());
-//        assertThat(resultDtos.getLast().getPokedexId()).isEqualTo(pokemonEntities.getLast().getPokedexId());
-//        assertThat(resultDtos.getLast().getName()).isEqualTo(pokemonEntities.getLast().getName());
-//    }
+    @Test
+    void GivenValidEntities_MapToEntities_ReturnCorrectEntities() {
+        /* ***************** ARRANGE ***************** */
+        PokemonDTO pikachu = PokemonMockUtils.getMockedPikachuDto(false);
+        PokemonDTO raichu = PokemonMockUtils.getMockedRaichuDto(false);
+
+        List<PokemonDTO> pokemonDtoList = List.of(pikachu, raichu);
+
+        doReturn(pokemonDtoList).when(pokemonMapper).mapListToDto(anyList());
+
+        /* ***************** ACT ***************** */
+        List<PokemonDTO> resultList = pokemonMapper.mapListToDto(anyList());
+
+        /* ***************** ASSERT ***************** */
+        assertNotNull(resultList);
+        assertThat(resultList).isNotEmpty();
+        assertEquals(resultList.getFirst().getPokedexId(), pikachu.getPokedexId());
+        assertEquals(resultList.size(), 2);
+
+        verify(pokemonMapper).mapListToDto(anyList());
+    }
+
+    @Test
+    void GivenEmptyEntities_MapToEntities_ReturnsEmptyDtoList() {
+        /* ***************** ARRANGE ***************** */
+        doReturn(List.of()).when(pokemonMapper).mapListToDto(any());
+
+        /* ***************** ACT ***************** */
+        List<PokemonDTO> result = pokemonMapper.mapListToDto(anyList());
+
+        /* ***************** ASSERT ***************** */
+        assertNotNull(result);
+        assertThat(result).isEmpty();
+
+        verify(pokemonMapper).mapListToDto(anyList());
+    }
 }
