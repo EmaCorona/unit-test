@@ -8,6 +8,7 @@ import it.corona.unitest.repository.PokemonRepository;
 import it.corona.unitest.service.PokemonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +37,11 @@ public class PokemonServiceImpl implements PokemonService {
 
                 log.info("Saving the Pokemon");
                 PokemonEntity savedPokemon = pokemonRepository.save(pokemonToCreate);
+                log.info("Pokemon Saved");
 
                 log.info("Mapping entity to dto");
                 PokemonDTO pokemonDTO = pokemonMapper.mapToDto(savedPokemon);
-
-                log.info("Pokemon successfully created");
+                log.info("Entity Mapped");
 
                 responseDTO.setPokemonDTO(pokemonDTO);
                 responseDTO.setHttpStatusCode(HttpStatus.CREATED.value());
@@ -48,17 +49,13 @@ public class PokemonServiceImpl implements PokemonService {
             } else {
                 String error = "Pokemon already exists";
                 log.info(error);
-                responseDTO.setError(error);
-                responseDTO.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
-                return responseDTO;
+                return getErrorResponse(responseDTO, error, HttpStatus.BAD_REQUEST);
             }
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             String error = "An unexpected error occured during the creation of the pokemon";
             log.info("{}: {}", error, requestDTO.getPokemonName());
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return responseDTO;
@@ -79,17 +76,13 @@ public class PokemonServiceImpl implements PokemonService {
 
         } catch (PokemonNotFoundException e) {
             String error = "Pokemon with id: " + pokemonId + " was not found";
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
             log.info(error);
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.NOT_FOUND);
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             String error = "An unexpected error occurred during the request of the pokemon with id: " + pokemonId;
             log.info("{}: {}", error, pokemonId);
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return responseDTO;
@@ -101,6 +94,7 @@ public class PokemonServiceImpl implements PokemonService {
 
         try {
             log.info("About to update the requested Pokemon: {}", requestDTO.getPokemonName());
+
             PokemonEntity pokemonToUpdate = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
             pokemonToUpdate.setPokedexId(requestDTO.getPokedexId());
             pokemonToUpdate.setName(requestDTO.getPokemonName());
@@ -108,26 +102,24 @@ public class PokemonServiceImpl implements PokemonService {
 
             log.info("Updating the pokemon");
             PokemonEntity savedPokemon = pokemonRepository.save(pokemonToUpdate);
+            log.info("Pokemon Updated");
 
             log.info("Mapping entity to dto");
             PokemonDTO pokemonDTO = pokemonMapper.mapToDto(savedPokemon);
+            log.info("Entity Mapped");
 
             responseDTO.setPokemonDTO(pokemonDTO);
             responseDTO.setHttpStatusCode(HttpStatus.OK.value());
 
         } catch (PokemonNotFoundException e) {
             String error = "Pokemon to update was not found";
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
             log.info(error);
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.NOT_FOUND);
 
-        } catch (Exception e) {
+        } catch (DataAccessException daoEx) {
             String error = "An unexpected error occurred during the update of the pokemon";
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             log.info("{}: {}", error, requestDTO.getPokemonName());
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return responseDTO;
@@ -142,10 +134,10 @@ public class PokemonServiceImpl implements PokemonService {
 
             log.info("Finding the pokemon to delete");
             PokemonEntity pokemonToDelete = pokemonRepository.findById(requestDTO.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
+            log.info("Pokemon found");
 
-            log.info("Delingte the pokemon");
+            log.info("Deleting the pokemon");
             pokemonRepository.delete(pokemonToDelete);
-
             log.info("Pokemon deleted");
 
             responseDTO.setPokemonDTO(pokemonMapper.mapToDto(pokemonToDelete));
@@ -154,18 +146,20 @@ public class PokemonServiceImpl implements PokemonService {
         } catch (PokemonNotFoundException e) {
             String error = "Pokemon to delete was not found";
             log.info(error);
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.NOT_FOUND);
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             String error = "An unexpected error occurred during the deletion of the pokemon";
             log.info("{}: {}", error, requestDTO.getPokemonName());
-            responseDTO.setError(error);
-            responseDTO.setHttpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return responseDTO;
+            return getErrorResponse(responseDTO, error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        return responseDTO;
+    }
+
+    private ResponseDTO getErrorResponse(ResponseDTO responseDTO, String error, HttpStatus status) {
+        responseDTO.setError(error);
+        responseDTO.setHttpStatusCode(status.value());
         return responseDTO;
     }
 }
