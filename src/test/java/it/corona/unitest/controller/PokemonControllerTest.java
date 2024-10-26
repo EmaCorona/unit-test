@@ -37,7 +37,7 @@ public class PokemonControllerTest {
 
     private static final String DELETE_POKEMON_REQUEST = "/pokemon/delete-pokemon";
 
-    private static final String FIND_BY_ID_POKEMON_REQUEST = "/pokemon/find-pokemon-by-id/{pokemonId}";
+    private static final String FIND_BY_ID_POKEMON_REQUEST = "/pokemon/find-pokemon-by-id/";
 
     private static final String UPDATE_POKEMON_REQUEST = "/pokemon/update-pokemon";
 
@@ -179,7 +179,61 @@ public class PokemonControllerTest {
                 .andDo(print())
                 .andExpect(status().is(405));
     }
-    
+
+    @Test
+    void GivenValidRequest_FindPokemonById_ReturnSelectedPokemon() throws Exception {
+        /* ***************** ARRANGE ***************** */
+        PokemonDTO pokemonDTO = PokemonMockUtils.getMockedPikachuDto(true);
+
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setHttpStatusCode(HttpStatus.OK.value());
+        responseDTO.setPokemonDTO(pokemonDTO);
+
+        when(pokemonService.findPokemonById(any())).thenReturn(responseDTO);
+
+        /* ***************** ACT ***************** */
+        mockMvc.perform(get(FIND_BY_ID_POKEMON_REQUEST + 999)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(responseDTO)));
+
+        /* ***************** ASSERT ***************** */
+        verify(pokemonService).findPokemonById(any());
+    }
+
+    @Test
+    void GivenInvalidRequest_FindPokemonById_ReturnBadRequest() throws Exception {
+        /* ***************** ARRANGE ***************** */
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
+
+        when(pokemonService.findPokemonById(any())).thenReturn(responseDTO);
+
+        /* ***************** ACT ***************** */
+        mockMvc.perform(get(FIND_BY_ID_POKEMON_REQUEST + 999)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        /* ***************** ASSERT ***************** */
+        verify(pokemonService).findPokemonById(any());
+    }
+
+    @Test
+    void GivenWrongUrl_FindPokemonById_ReturnNotFound() throws Exception {
+        /* ***************** ACT ***************** */
+        mockMvc.perform(get(FIND_BY_ID_POKEMON_REQUEST + 999 + WRONG_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void GivenWrongMethod_FindPokemonById_Return405() throws Exception {
+        /* ***************** ACT ***************** */
+        mockMvc.perform(post(FIND_BY_ID_POKEMON_REQUEST + 999)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(405));
+    }
+
     @Test
     void GivenValidRequest_DeletePokemon_ReturnDeletedPokemon() throws Exception {
         /* ***************** ARRANGE ***************** */
