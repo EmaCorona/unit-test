@@ -140,6 +140,9 @@ public class PokemonMapperTest {
         assertNotNull(resultEntities);
         assertThat(resultEntities).isNotEmpty();
         assertThat(resultEntities).hasSize(2);
+
+        verify(modelMapper).map(pikachuDto, PokemonEntity.class);
+        verify(modelMapper).map(raichuDto, PokemonEntity.class);
     }
 
     @Test

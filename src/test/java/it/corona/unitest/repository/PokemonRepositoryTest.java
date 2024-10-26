@@ -2,6 +2,7 @@ package it.corona.unitest.repository;
 
 import it.corona.unitest.enums.PokemonEnum;
 import it.corona.unitest.enums.PokemonType;
+import it.corona.unitest.exception.PokemonNotFoundException;
 import it.corona.unitest.model.entity.PokemonEntity;
 import it.corona.unitest.utils.PokemonMockUtils;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -64,20 +67,20 @@ public class PokemonRepositoryTest {
     }
 
     @Test
-    public void PokemonRepository_FindById_ReturnOnePokemon() {
+    public void PokemonRepository_FindById_ReturnRequestedPokemon() {
         /* ***************** ARRANGE ***************** */
         PokemonEntity charmander = PokemonMockUtils.getMockedCharmanderEntity(false);
-
         pokemonRepository.save(charmander);
 
         /* ***************** ACT ***************** */
-        PokemonEntity returnedPokemon = pokemonRepository.findById(charmander.getPokemonId()).get();
+        PokemonEntity returnedPokemon = pokemonRepository.findById(charmander.getPokemonId()).orElseThrow(PokemonNotFoundException::new);
 
         /* ***************** ASSERT ***************** */
-        assertThat(returnedPokemon).isNotNull();
-        assertThat(returnedPokemon.getName()).isEqualTo(PokemonEnum.CHARMANDER.getPokemonName());
-        assertThat(returnedPokemon.getPokedexId()).isEqualTo(PokemonEnum.CHARMANDER.getPokedexId());
-        assertThat(returnedPokemon.getType()).isEqualTo(PokemonType.FIRE.getType());
+        assertNotNull(returnedPokemon);
+        assertEquals(returnedPokemon.getPokemonId(), charmander.getPokemonId());
+        assertEquals(returnedPokemon.getPokedexId(), charmander.getPokedexId());
+        assertEquals(returnedPokemon.getName(), charmander.getName());
+        assertEquals(returnedPokemon.getType(), charmander.getType());
     }
 
     @Test
