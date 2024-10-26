@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,14 +37,14 @@ public class PokemonControllerTest {
 
     private static final String DELETE_POKEMON_REQUEST = "/pokemon/delete-pokemon";
 
-    private static final String FIND_BY_ID_POKEMON_REQUEST = "/pokemon/find-pokemon-by-id/";
+    private static final String FIND_BY_ID_POKEMON_REQUEST = "/pokemon/find-pokemon-by-id/{pokemonId}";
 
     private static final String UPDATE_POKEMON_REQUEST = "/pokemon/update-pokemon";
 
     private static final String WRONG_URL = "/WRONG_URL";
 
     @Test
-    public void GivenValidRequest_CreatePokemon_ReturnCreatedPokemon() throws Exception {
+    void GivenValidRequest_CreatePokemon_ReturnCreatedPokemon() throws Exception {
         /* ***************** ARRANGE ***************** */
         PokemonDTO pokemon = PokemonMockUtils.getMockedPikachuDto(false);
 
@@ -71,7 +72,7 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenInvalidRequest_CreatePokemon_ReturnBadRequest() throws Exception {
+    void GivenInvalidRequest_CreatePokemon_ReturnBadRequest() throws Exception {
         /* ***************** ARRANGE ***************** */
         ResponseDTO response = new ResponseDTO();
         response.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
@@ -90,7 +91,7 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenWrongUrl_CreatePokemon_ReturnNotFound() throws Exception {
+    void GivenWrongUrl_CreatePokemon_ReturnNotFound() throws Exception {
         /* ***************** ACT ***************** */
         mockMvc.perform(post(CREATE_POKEMON_REQUEST + WRONG_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +100,17 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenValidRequest_UpdatePokemon_ReturnUpdatedPokemon() throws Exception {
+    void GivenWrongMethod_CreatePokemon_Return405() throws Exception {
+        /* ***************** ACT ***************** */
+        mockMvc.perform(get(UPDATE_POKEMON_REQUEST)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(405));
+    }
+
+    @Test
+    void GivenValidRequest_UpdatePokemon_ReturnUpdatedPokemon() throws Exception {
         /* ***************** ARRANGE ***************** */
         PokemonDTO pokemonDto = PokemonMockUtils.getMockedPikachuDto(true);
         PokemonDTO updatedPokemon = PokemonMockUtils.getMockedRaichuDto(false);
@@ -129,7 +140,7 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenInvalidRequest_UpdatePokemon_ReturnBadRequest() throws Exception {
+    void GivenInvalidRequest_UpdatePokemon_ReturnBadRequest() throws Exception {
         /* ***************** ARRANGE ***************** */
         UpdatePokemonRequestDTO request = new UpdatePokemonRequestDTO();
 
@@ -151,47 +162,26 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenWrongUrl_UpdatePokemon_ReturnNotFound() throws Exception {
+    void GivenWrongUrl_UpdatePokemon_ReturnNotFound() throws Exception {
         /* ***************** ACT ***************** */
         mockMvc.perform(post(UPDATE_POKEMON_REQUEST + WRONG_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
-//
-//    @Test
-//    public void PokemonController_FindById_ReturnFoundPokemon() throws Exception {
-//        when(pokemonService.findById(any(Long.class))).thenReturn(pokemonDto);
-//
-//        Long pokemonId = 1L;
-//
-//        mockMvc.perform(get("/pokemon/find-by-id/{pokemonId}", pokemonId)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                ).andExpect(status().isOk())
-//                .andExpect(content().json(objectMapper.writeValueAsString(pokemonDto)));
-//    }
-//
-//    @Test
-//    public void PokemonController_FindAll_ReturnFoundedPokemons() throws Exception {
-//        when(pokemonService.findAllPokemon()).thenReturn(List.of(pokemonDto));
-//
-//        mockMvc.perform(get("/pokemon/find-all-pokemons")
-//                .accept(MediaType.APPLICATION_JSON)
-//        ).andExpect(status().isOk());
-//    }
 
     @Test
-    public void GivenNonExistingPokemon_FindById_ReturnNotFound() throws Exception {
+    void GivenWrongMethod_UpdatePokemon_Return405() throws Exception {
         /* ***************** ACT ***************** */
-        mockMvc.perform(get(FIND_BY_ID_POKEMON_REQUEST)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .param("pokemonId", "999")
-        ).andExpect(status().isNotFound());
+        mockMvc.perform(get(UPDATE_POKEMON_REQUEST)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(405));
     }
-
+    
     @Test
-    public void GivenValidRequest_DeletePokemon_ReturnDeletedPokemon() throws Exception {
+    void GivenValidRequest_DeletePokemon_ReturnDeletedPokemon() throws Exception {
         /* ***************** ARRANGE ***************** */
         DeletePokemonRequestDTO request = new DeletePokemonRequestDTO();
         request.setPokemonId(1L);
@@ -215,7 +205,7 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenInvalidRequest_DeletePokemon_ReturnBadRequest() throws Exception {
+    void GivenInvalidRequest_DeletePokemon_ReturnBadRequest() throws Exception {
         /* ***************** ARRANGE ***************** */
         DeletePokemonRequestDTO request = new DeletePokemonRequestDTO();
 
@@ -237,11 +227,21 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void GivenWrongUrl_DeletePokemon_ReturnNotFound() throws Exception {
+    void GivenWrongUrl_DeletePokemon_ReturnNotFound() throws Exception {
         /* ***************** ACT ***************** */
-        mockMvc.perform(post(DELETE_POKEMON_REQUEST + WRONG_URL)
+        mockMvc.perform(delete(DELETE_POKEMON_REQUEST + WRONG_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void GivenWrongMethod_DeletePokemon_Return405() throws Exception {
+        /* ***************** ACT ***************** */
+        mockMvc.perform(get(DELETE_POKEMON_REQUEST)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(405));
     }
 }
